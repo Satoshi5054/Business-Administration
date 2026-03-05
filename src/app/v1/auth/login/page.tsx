@@ -31,7 +31,7 @@ export default function LoginPage() {
 
       await api.post("/auth/login", validatedData)
       
-      router.push("/dashboard")
+      router.push("/v1/manager/dashboard")
 
     } catch (err: any) {
       if (err.response?.data?.error) {
