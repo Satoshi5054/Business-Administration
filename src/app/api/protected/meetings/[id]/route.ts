@@ -36,19 +36,19 @@ export async function PATCH(
 // DELETE MEETING
 export async function DELETE(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const user = await requireAuth()
-
-    if (!params.id) {
+    const { id } = await params;
+    if (!id) {
       return NextResponse.json(
         { message: "Meeting id is required" },
         { status: 400 }
       )
     }
 
-    await deleteMeeting(user, params.id)
+    await deleteMeeting(user, id)
 
     return NextResponse.json({
       message: "Meeting deleted successfully"
