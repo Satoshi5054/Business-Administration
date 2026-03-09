@@ -4,8 +4,8 @@ import { useEffect, useState } from "react"
 import { api } from "@/lib/axios"
 
 import StatCard from "@/components/dashboard/StatCard"
-import UpcomingMeetings from "@/components/meeting/UpcomingMeetings"
 import RecentActivity from "@/components/dashboard/RecentActivity"
+import MeetingCard from "@/components/dashboard/MeetingCard"
 
 export default function ManagerDashboard() {
   const [employeeCount, setEmployeeCount] = useState(0)
@@ -82,13 +82,12 @@ export default function ManagerDashboard() {
       <div className="grid grid-cols-3 gap-6 mt-6">
 
         <div className="col-span-2">
-          <UpcomingMeetings />
+          <MeetingCard />
         </div>
 
         <RecentActivity />
 
       </div>
-
     </div>
   )
 }

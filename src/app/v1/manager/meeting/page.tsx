@@ -6,7 +6,7 @@ import UpcomingMeetings from "@/components/meeting/UpcomingMeetings";
 import NewMeeting from "@/components/meeting/NewMeeting";
 
 export default function MeetingPage() {
-  const [openNewMeeting, setOpenNewMeeting] = useState(false);
+  const [openNewMeeting, setOpenNewMeeting] = useState(false)
 
   return (
     <div className="space-y-6">
@@ -26,7 +26,7 @@ export default function MeetingPage() {
           onClick={() => setOpenNewMeeting(true)}
           className="mr-4 px-4 py-2 bg-blue-600 text-white rounded-md text-sm hover:bg-blue-700"
         >
-          + New Meeting
+          New Meeting
         </button>
       </div>
 

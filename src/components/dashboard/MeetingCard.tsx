@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import axios from "axios";
+import NewMeeting from "@/components/meeting/NewMeeting";
 
 type Meeting = {
   id: string;
@@ -11,11 +12,11 @@ type Meeting = {
   location?: string | null;
 }
 
-export default function UpcomingMeetings() {
+export default function MeetingCard() {
   const [meetings, setMeetings] = useState<Meeting[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-
+  const [openNewMeeting, setOpenNewMeeting] = useState(false);
   useEffect(() => {
     const fetchTodayMeetings = async () => {
       try {
@@ -50,8 +51,12 @@ export default function UpcomingMeetings() {
             className="w-8 h-8 m-2"
             alt="Meeting Schedular"
           />
-            Upcoming Meetings
+            Today's Meetings
         </h2>
+
+        <button onClick={() => setOpenNewMeeting(true)} className="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 transition cursor-pointer">
+          Schedule Meeting
+        </button>
       </div>
 
       {/* Content */}
@@ -120,6 +125,12 @@ export default function UpcomingMeetings() {
           );
         })}
       </div>
+       <NewMeeting
+              open={openNewMeeting}
+              onClose={() => setOpenNewMeeting(false)}
+              onCreated={() => window.location.reload()}
+            />
     </div>
+    
   );
 }

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import axios from "axios";
 
 type NewMeetingProps = {
   open: boolean;
@@ -72,21 +73,23 @@ export default function NewMeeting({
 
       try {
         setSearchLoading(true);
-        const res = await fetch(
-          `/api/protected/participants?q=${encodeURIComponent(search.trim())}`,
-        );
-        const data = await res.json();
 
-        if (res.ok) {
-          const selectedIds = new Set(selected.map((p) => p.id));
-          setOptions(
-            (data || []).filter(
-              (p: ParticipantOption) => !selectedIds.has(p.id),
-            ),
-          );
-        } else {
-          setOptions([]);
-        }
+        const { data } = await axios.get(
+          "/api/protected/participants",
+          {
+            params: { q: search.trim() },
+          },
+        );
+
+        const selectedIds = new Set(selected.map((p) => p.id));
+
+        setOptions(
+          (data || []).filter(
+            (p: ParticipantOption) => !selectedIds.has(p.id),
+          ),
+        );
+      } catch {
+        setOptions([]);
       } finally {
         setSearchLoading(false);
       }
@@ -123,21 +126,16 @@ export default function NewMeeting({
         participants: selected.map((p) => p.id),
       };
 
-      const res = await fetch("/api/protected/meetings", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
-
-      if (!res.ok) {
-        const data = await res.json().catch(() => null);
-        throw new Error(data?.message || "Failed to create meeting");
-      }
+      await axios.post("/api/protected/meetings", payload);
 
       handleClose();
       onCreated?.();
     } catch (err: any) {
-      setError(err?.message || "Something went wrong");
+      setError(
+        err?.response?.data?.message ||
+          err?.message ||
+          "Something went wrong",
+      );
     } finally {
       setLoading(false);
     }
@@ -147,11 +145,14 @@ export default function NewMeeting({
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
       <div className="w-full max-w-xl rounded-xl bg-white p-6 shadow-xl">
         <div className="mb-4 flex items-center justify-between">
-          <h2 className="text-lg font-semibold text-gray-900">New Meeting</h2>
+          <h2 className="text-lg font-semibold text-gray-900">
+            New Meeting
+          </h2>
+
           <button
             type="button"
             onClick={handleClose}
-            className="text-sm text-gray-500 hover:text-gray-700"
+            className="text-sm text-gray-500 hover:text-gray-700 cursor-pointer"
           >
             Close
           </button>
@@ -193,6 +194,7 @@ export default function NewMeeting({
               required
               className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
             />
+
             <input
               type="datetime-local"
               name="endTime"
@@ -211,31 +213,32 @@ export default function NewMeeting({
               className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
             />
 
-            {searchLoading ? (
+            {searchLoading && (
               <p className="text-xs text-gray-500">Searching...</p>
-            ) : null}
+            )}
 
-            {options.length > 0 ? (
+            {options.length > 0 && (
               <div className="max-h-44 overflow-auto rounded-md border border-gray-200">
                 {options.map((p) => (
                   <button
                     type="button"
                     key={p.id}
                     onClick={() => addParticipant(p)}
-                    className="w-full border-b border-gray-100 px-3 py-2 text-left hover:bg-gray-50"
+                    className="w-full border-b border-gray-100 px-3 py-2 text-left hover:bg-gray-50 cursor-pointer"
                   >
                     <div className="text-sm font-medium text-gray-800">
                       {p.name}
                     </div>
+
                     <div className="text-xs text-gray-500">
                       {p.email} • {p.departmentName}
                     </div>
                   </button>
                 ))}
               </div>
-            ) : null}
+            )}
 
-            {selected.length > 0 ? (
+            {selected.length > 0 && (
               <div className="flex flex-wrap gap-2 pt-1">
                 {selected.map((p) => (
                   <span
@@ -243,33 +246,37 @@ export default function NewMeeting({
                     className="inline-flex items-center gap-2 rounded-full bg-blue-50 px-3 py-1 text-xs text-blue-700"
                   >
                     {p.name} ({p.departmentName})
+
                     <button
                       type="button"
                       onClick={() => removeParticipant(p.id)}
-                      className="text-blue-700 hover:text-blue-900"
+                      className="text-blue-700 hover:text-blue-900 cursor-pointer"
                     >
                       ✕
                     </button>
                   </span>
                 ))}
               </div>
-            ) : null}
+            )}
           </div>
 
-          {error ? <p className="text-sm text-red-600">{error}</p> : null}
+          {error && (
+            <p className="text-sm text-red-600">{error}</p>
+          )}
 
           <div className="flex justify-end gap-2 pt-2">
             <button
               type="button"
               onClick={handleClose}
-              className="rounded-md border border-gray-300 px-4 py-2 text-sm"
+              className="rounded-md border border-gray-300 px-4 py-2 text-sm hover:bg-gray-100 cursor-pointer"
             >
               Cancel
             </button>
+
             <button
               type="submit"
               disabled={loading}
-              className="rounded-md bg-blue-600 px-4 py-2 text-sm text-white hover:bg-blue-700 disabled:opacity-60"
+              className="rounded-md bg-blue-600 px-4 py-2 text-sm text-white hover:bg-blue-700 disabled:opacity-60 cursor-pointer"
             >
               {loading ? "Creating..." : "Create Meeting"}
             </button>

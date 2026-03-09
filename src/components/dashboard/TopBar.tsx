@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import LogoutButton from "./LogoutButton"
 
 export default function TopBar() {
   const [open, setOpen] = useState(false)
@@ -29,18 +30,7 @@ export default function TopBar() {
       <div className="flex-1 flex justify-end items-center gap-8">
 
         {/* Logout */}
-        <button
-            className="flex items-center gap-2 text-sm text-red-500 hover:text-red-600 font-medium"
-        >
-            Logout
-            <img
-            src="/dashboard/icons/logout.svg"
-            alt="logout"
-            className="w-5 h-5"
-            />
-
-            
-        </button>
+        <LogoutButton />
 
         {/*Profile*/}
         <div className="relative">
