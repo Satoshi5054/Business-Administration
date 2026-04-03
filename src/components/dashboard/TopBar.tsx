@@ -1,14 +1,35 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import LogoutButton from "./LogoutButton"
+import { api } from "@/lib/axios"
+
+type User = {
+  name: string
+  email: string
+  role: string
+}
+
 
 export default function TopBar() {
   const [open, setOpen] = useState(false)
+  const [user, setUser] = useState<User | null>(null)
 
-  const user = {
-    name: "Super Admin",
-    email: "SuperAdmin@gmail.com"
+  useEffect(()=>{
+    const fetchUser = async()=>{
+      try{
+        const res = await api.get("/auth/me")
+        setUser(res.data)
+      }catch(err){
+        console.error("Failed to fetch user", err)
+      }
+    }
+
+    fetchUser()
+  },[])
+
+  if (!user) {
+    return <div className="h-16 flex items-center px-6">Loading...</div>
   }
 
   return (
@@ -20,8 +41,8 @@ export default function TopBar() {
       {/* CENTER */}
       <div className="absolute left-1/2 transform -translate-x-1/2">
 
-        <h2 className="text-lg font-semibold text-gray-800">
-          Welcome, {user.name}
+        <h2 className="text-xl font-semibold text-gray-800">
+          {user.role} - {user.name}
         </h2>
 
       </div>
@@ -37,7 +58,7 @@ export default function TopBar() {
 
           <button
             onClick={() => setOpen(!open)}
-            className="flex items-center gap-3"
+            className="flex items-center gap-3 cursor-pointer"
           >
             <div className="w-9 h-9 rounded-full bg-blue-100 flex items-center justify-center font-medium text-blue-600">
               {user.name[0]}
@@ -57,7 +78,7 @@ export default function TopBar() {
 
               <hr className="my-3" />
 
-              <button className="text-sm text-blue-600 hover:underline">
+              <button className="text-sm text-blue-600 hover:underline cursor-pointer">
                 View Profile
               </button>
 
