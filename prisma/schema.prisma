@@ -86,6 +86,7 @@ department   Department? @relation(fields: [departmentId], references: [id])
 employee     Employee?
 
 reviewedLeaves LeaveRequest[] @relation("LeaveReviewedBy")
+paidPayments Payment[] @relation("UserPayments")
 createdMeetings Meeting[]
 meetingParticipants MeetingParticipant[]
 
@@ -126,6 +127,7 @@ companyId     String
 company       Company   @relation(fields: [companyId], references: [id], onDelete: Cascade)
 
 leaveRequests LeaveRequest[]
+salaryPayments SalaryPayment[]
 
 createdAt     DateTime @default(now())
 updatedAt     DateTime @updatedAt
@@ -211,29 +213,71 @@ deletedAt   DateTime?
 //////////////////////////////////////////////////////
 
 model Payment {
-id                 String        @id @default(cuid())
+  id          String   @id @default(cuid())
 
-amount             Decimal       @db.Decimal(10,2)
+  amount      Decimal  @db.Decimal(10,2)
+  method      PaymentMethod
+  status      PaymentStatus @default(PENDING)
 
-method             PaymentMethod
-status             PaymentStatus @default(PENDING)
+  type        PaymentType   
+  description String?
 
-razorpayPaymentId  String?
-razorpayOrderId    String?
-razorpaySignature  String?
+  paidById    String?
+  paidBy      User? @relation("UserPayments", fields: [paidById], references: [id])
 
-paidAt             DateTime?
+  companyId   String
+  company     Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
 
-companyId          String
-company            Company       @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  // Razorpay
+  razorpayPaymentId String?
+  razorpayOrderId   String? @unique
+  razorpaySignature String?
 
-createdAt          DateTime     @default(now())
-updatedAt          DateTime     @updatedAt
+  paidAt      DateTime?
 
-@@index([companyId])
+  salaryPayment SalaryPayment?
+  expensePayment ExpensePayment?
 
-@@map("payments")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([companyId, type])
+  @@index([status])
 }
+
+
+model SalaryPayment {
+  id         String @id @default(cuid())
+
+  paymentId  String @unique
+  payment    Payment @relation(fields: [paymentId], references: [id], onDelete: Cascade)
+
+  employeeId String
+  employee   Employee @relation(fields: [employeeId], references: [id])
+
+  month      String   // "2026-03"
+  baseSalary Decimal  @db.Decimal(10,2)
+  bonus      Decimal? @db.Decimal(10,2)
+  deductions Decimal? @db.Decimal(10,2)
+
+  createdAt  DateTime @default(now())
+}
+
+model ExpensePayment {
+  id         String @id @default(cuid())
+
+  paymentId  String @unique
+  payment    Payment @relation(fields: [paymentId], references: [id], onDelete: Cascade)
+
+  title      String  // "AWS Hosting"
+  category   ExpenseCategory
+  vendor     String? // "AWS", "Vercel"
+
+  isRecurring Boolean @default(false)
+
+  createdAt  DateTime @default(now())
+}
+
 
 //////////////////////////////////////////////////////
 // MEETING
@@ -339,4 +383,18 @@ enum LeaveStatus {
   PENDING
   APPROVED
   REJECTED
+}
+
+enum PaymentType {
+  SALARY
+  EXPENSE
+  SUBSCRIPTION
+}
+
+enum ExpenseCategory {
+  HOSTING
+  DATABASE
+  SAAS
+  INFRA
+  OTHER
 }

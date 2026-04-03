@@ -53,6 +53,14 @@ export default function Sidebar() {
             icon="/dashboard/icons/Leave.svg"
             active={pathname.startsWith("/v1/manager/leave")}
           />
+
+          <SidebarItem
+            href="/v1/manager/payments"
+            label="Payments"
+            icon="/dashboard/icons/payment.svg"
+            active={pathname.startsWith("/v1/manager/payments")}
+          />
+          
         </nav>
       </div>
     </aside>
