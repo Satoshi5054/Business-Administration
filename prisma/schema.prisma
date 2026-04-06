@@ -3,8 +3,8 @@
 //////////////////////////////////////////////////////
 
 generator client {
-provider = "prisma-client"
-output   = "../src/generated/prisma"
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
 }
 
 //////////////////////////////////////////////////////
@@ -12,7 +12,7 @@ output   = "../src/generated/prisma"
 //////////////////////////////////////////////////////
 
 datasource db {
-provider = "postgresql"
+  provider = "postgresql"
 }
 
 //////////////////////////////////////////////////////
@@ -20,24 +20,24 @@ provider = "postgresql"
 //////////////////////////////////////////////////////
 
 model Company {
-id          String   @id @default(cuid())
-name        String
-slug        String   @unique
-plan        PlanType @default(FREE)
-status      Status   @default(ACTIVE)
+  id     String   @id @default(cuid())
+  name   String
+  slug   String   @unique
+  plan   PlanType @default(FREE)
+  status Status   @default(ACTIVE)
 
-createdAt   DateTime @default(now())
-updatedAt   DateTime @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-leaveRequests LeaveRequest[]
-users       User[]
-departments Department[]
-employees   Employee[]
-customers   Customer[]
-payments    Payment[]
-meetings    Meeting[]
+  leaveRequests LeaveRequest[]
+  users         User[]
+  departments   Department[]
+  employees     Employee[]
+  customers     Customer[]
+  payments      Payment[]
+  meetings      Meeting[]
 
-@@map("companies")
+  @@map("companies")
 }
 
 //////////////////////////////////////////////////////
@@ -45,23 +45,22 @@ meetings    Meeting[]
 //////////////////////////////////////////////////////
 
 model Department {
-id          String   @id @default(cuid())
-name        String
-description String?
+  id          String  @id @default(cuid())
+  name        String
+  description String?
 
-companyId   String
-company     Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  companyId String
+  company   Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
 
-users       User[]
-employees   Employee[]
+  users     User[]
+  employees Employee[]
 
-createdAt   DateTime @default(now())
-updatedAt   DateTime @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-@@unique([companyId, name])
-@@index([companyId])
-
-@@map("departments")
+  @@unique([companyId, name])
+  @@index([companyId])
+  @@map("departments")
 }
 
 //////////////////////////////////////////////////////
@@ -69,34 +68,33 @@ updatedAt   DateTime @updatedAt
 //////////////////////////////////////////////////////
 
 model User {
-id           String   @id @default(cuid())
+  id String @id @default(cuid())
 
-email        String
-password     String
-name         String
+  email    String
+  password String
+  name     String
 
-role         UserRole
+  role UserRole
 
-companyId    String
-company      Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  companyId String
+  company   Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
 
-departmentId String?
-department   Department? @relation(fields: [departmentId], references: [id])
+  departmentId String?
+  department   Department? @relation(fields: [departmentId], references: [id])
 
-employee     Employee?
+  employee Employee?
 
-reviewedLeaves LeaveRequest[] @relation("LeaveReviewedBy")
-createdMeetings Meeting[]
-meetingParticipants MeetingParticipant[]
+  reviewedLeaves      LeaveRequest[]       @relation("LeaveReviewedBy")
+  createdMeetings     Meeting[]
+  meetingParticipants MeetingParticipant[]
 
-createdAt    DateTime @default(now())
-updatedAt    DateTime @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-@@unique([companyId, email])
-@@index([companyId])
-@@index([departmentId])
-
-@@map("users")
+  @@unique([companyId, email])
+  @@index([companyId])
+  @@index([departmentId])
+  @@map("users")
 }
 
 //////////////////////////////////////////////////////
@@ -104,41 +102,39 @@ updatedAt    DateTime @updatedAt
 //////////////////////////////////////////////////////
 
 model Employee {
-id            String   @id @default(cuid())
+  id String @id @default(cuid())
 
-employeeCode  String
-name          String
-email         String?
-phone         String?
+  employeeCode String
+  name         String
+  email        String?
+  phone        String?
 
-position      String
-salary        Decimal? @db.Decimal(10,2)
+  position String
+  salary   Decimal? @db.Decimal(10, 2)
 
-joinDate      DateTime
+  joinDate DateTime
 
-userId        String   @unique
-user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-departmentId  String
-department    Department @relation(fields: [departmentId], references: [id])
+  departmentId String
+  department   Department @relation(fields: [departmentId], references: [id])
 
-companyId     String
-company       Company   @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  companyId String
+  company   Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
 
-leaveRequests LeaveRequest[]
+  leaveRequests LeaveRequest[]
 
-createdAt     DateTime @default(now())
-updatedAt     DateTime @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-@@unique([companyId, employeeCode])
-
-@@index([companyId])
-@@index([departmentId])
-@@index([userId])
-@@index([companyId, departmentId])
-@@index([companyId, departmentId, name])
-
-@@map("employees")
+  @@unique([companyId, employeeCode])
+  @@index([companyId])
+  @@index([departmentId])
+  @@index([userId])
+  @@index([companyId, departmentId])
+  @@index([companyId, departmentId, name])
+  @@map("employees")
 }
 
 //////////////////////////////////////////////////////
@@ -146,33 +142,33 @@ updatedAt     DateTime @updatedAt
 //////////////////////////////////////////////////////
 
 model LeaveRequest {
-  id            String      @id @default(cuid())
+  id String @id @default(cuid())
 
-  leaveType     LeaveType
-  reason        String?
+  leaveType LeaveType
+  reason    String?
 
-  startDate     DateTime
-  endDate       DateTime
-  totalDays     Int
+  startDate DateTime
+  endDate   DateTime
+  totalDays Int
 
-  status        LeaveStatus @default(PENDING)
+  status LeaveStatus @default(PENDING)
 
   // Who requested
-  employeeId    String
-  employee      Employee    @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+  employeeId String
+  employee   Employee @relation(fields: [employeeId], references: [id], onDelete: Cascade)
 
   // Tenant safety
-  companyId     String
-  company       Company     @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  companyId String
+  company   Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
 
   // Manager who approved/rejected
-  reviewedById  String?
-  reviewedBy    User?       @relation("LeaveReviewedBy", fields: [reviewedById], references: [id])
+  reviewedById String?
+  reviewedBy   User?   @relation("LeaveReviewedBy", fields: [reviewedById], references: [id])
 
-  reviewedAt    DateTime?
+  reviewedAt DateTime?
 
-  createdAt     DateTime    @default(now())
-  updatedAt     DateTime    @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@index([companyId])
   @@index([employeeId])
@@ -186,24 +182,23 @@ model LeaveRequest {
 //////////////////////////////////////////////////////
 
 model Customer {
-id          String   @id @default(cuid())
+  id String @id @default(cuid())
 
-name        String
-email       String?
-phone       String?
-address     String?
+  name    String
+  email   String?
+  phone   String?
+  address String?
 
-companyId   String
-company     Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  companyId String
+  company   Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
 
-createdAt   DateTime @default(now())
-updatedAt   DateTime @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-deletedAt   DateTime?
+  deletedAt DateTime?
 
-@@index([companyId])
-
-@@map("customers")
+  @@index([companyId])
+  @@map("customers")
 }
 
 //////////////////////////////////////////////////////
@@ -211,28 +206,27 @@ deletedAt   DateTime?
 //////////////////////////////////////////////////////
 
 model Payment {
-id                 String        @id @default(cuid())
+  id String @id @default(cuid())
 
-amount             Decimal       @db.Decimal(10,2)
+  amount Decimal @db.Decimal(10, 2)
 
-method             PaymentMethod
-status             PaymentStatus @default(PENDING)
+  method PaymentMethod
+  status PaymentStatus @default(PENDING)
 
-razorpayPaymentId  String?
-razorpayOrderId    String?
-razorpaySignature  String?
+  razorpayPaymentId String?
+  razorpayOrderId   String?
+  razorpaySignature String?
 
-paidAt             DateTime?
+  paidAt DateTime?
 
-companyId          String
-company            Company       @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  companyId String
+  company   Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
 
-createdAt          DateTime     @default(now())
-updatedAt          DateTime     @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-@@index([companyId])
-
-@@map("payments")
+  @@index([companyId])
+  @@map("payments")
 }
 
 //////////////////////////////////////////////////////
@@ -240,29 +234,29 @@ updatedAt          DateTime     @updatedAt
 //////////////////////////////////////////////////////
 
 model Meeting {
-  id          String   @id @default(cuid())
+  id String @id @default(cuid())
 
   title       String
   description String?
 
-  startTime   DateTime
-  endTime     DateTime
-  allDay      Boolean  @default(false)
+  startTime DateTime
+  endTime   DateTime
+  allDay    Boolean  @default(false)
 
-  location    String?
+  location String?
 
   // Tenant safety
-  companyId   String
-  company     Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  companyId String
+  company   Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
 
   // Who created it
   createdById String
-  createdBy   User     @relation(fields: [createdById], references: [id])
+  createdBy   User   @relation(fields: [createdById], references: [id])
 
   participants MeetingParticipant[]
 
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@index([companyId])
   @@index([startTime])
@@ -274,13 +268,13 @@ model Meeting {
 //////////////////////////////////////////////////////
 
 model MeetingParticipant {
-  id         String   @id @default(cuid())
+  id String @id @default(cuid())
 
-  meetingId  String
-  meeting    Meeting  @relation(fields: [meetingId], references: [id], onDelete: Cascade)
+  meetingId String
+  meeting   Meeting @relation(fields: [meetingId], references: [id], onDelete: Cascade)
 
-  userId     String
-  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([meetingId, userId])
   @@index([userId])
@@ -292,38 +286,38 @@ model MeetingParticipant {
 //////////////////////////////////////////////////////
 
 enum PlanType {
-FREE
-BASIC
-PROFESSIONAL
-ENTERPRISE
+  FREE
+  BASIC
+  PROFESSIONAL
+  ENTERPRISE
 }
 
 enum Status {
-ACTIVE
-INACTIVE
-SUSPENDED
+  ACTIVE
+  INACTIVE
+  SUSPENDED
 }
 
 enum UserRole {
-ADMIN
-MANAGER
-USER
-VIEWER
+  ADMIN
+  MANAGER
+  USER
+  VIEWER
 }
 
 enum PaymentMethod {
-CASH
-CARD
-UPI
-NET_BANKING
-RAZORPAY
+  CASH
+  CARD
+  UPI
+  NET_BANKING
+  RAZORPAY
 }
 
 enum PaymentStatus {
-PENDING
-SUCCESS
-FAILED
-REFUNDED
+  PENDING
+  SUCCESS
+  FAILED
+  REFUNDED
 }
 
 enum LeaveType {
