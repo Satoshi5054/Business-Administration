@@ -60,7 +60,7 @@ export default function TopBar() {
         <div className="relative">
           <button
             onClick={() => setOpen(!open)}
-            className="flex items-center gap-3"
+            className="flex items-center gap-3 cursor-pointer"
           >
             <div className="w-9 h-9 rounded-full bg-blue-100 flex items-center justify-center font-medium text-blue-600">
               {userInitial}
@@ -75,7 +75,7 @@ export default function TopBar() {
 
               <hr className="my-3" />
 
-              <button className="text-sm text-blue-600 hover:underline">
+              <button className="text-sm text-blue-600 hover:underline cursor-pointer">
                 View Profile
               </button>
             </div>

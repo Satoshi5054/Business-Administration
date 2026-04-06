@@ -95,7 +95,7 @@ export default function EmployeePage(){
         </div>
 
         <button
-          onClick={() => router.push("/auth/register-employee")}
+          onClick={() => router.push("/v1/auth/register-employee")}
           className="bg-blue-600 text-white px-4 py-2 rounded-lg shadow-sm hover:bg-blue-700 cursor-pointer transition "
         >
           + Add Employee
