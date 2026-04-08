@@ -1,10 +1,12 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
 import { api } from "@/lib/axios";
 import LogoutButton from "./LogoutButton";
 
 export default function TopBar() {
+  const router = useRouter();
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState({
@@ -75,7 +77,13 @@ export default function TopBar() {
 
               <hr className="my-3" />
 
-              <button className="text-sm text-blue-600 hover:underline cursor-pointer">
+              <button
+                onClick={() => {
+                  setOpen(false);
+                  router.push("/v1/profile");
+                }}
+                className="text-sm text-blue-600 hover:underline cursor-pointer"
+              >
                 View Profile
               </button>
             </div>
