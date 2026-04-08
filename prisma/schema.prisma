@@ -237,7 +237,7 @@ model Payment {
 
   @@index([companyId, type])
   @@index([status])
-  @@map("Payment") // was "payments"
+  @@map("payments")
 }
 
 //////////////////////////////////////////////////////
