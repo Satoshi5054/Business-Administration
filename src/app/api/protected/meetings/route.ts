@@ -2,7 +2,7 @@ import { requireAuth } from "@/lib/server-auth"
 import { NextRequest, NextResponse } from "next/server"
 import { getMonthMeetings, createMeeting } from "@/controllers/meeting.controller"
 
-// GET MONTH MEETINGS
+// Returns meetings for a specific month and year.
 export async function GET(req: NextRequest) {
   try {
     const user = await requireAuth()
@@ -19,7 +19,7 @@ export async function GET(req: NextRequest) {
       )
     }
 
-    // convert to numbers
+    // Convert query params to numeric values used by the controller.
     const month = Number(monthParam) - 1 // JS months are 0-indexed
     const year = Number(yearParam)
 
@@ -43,7 +43,7 @@ export async function GET(req: NextRequest) {
 }
 
 
-// CREATE MEETING
+// Creates a new meeting in the current company context.
 export async function POST(req: NextRequest) {
   try {
     const user = await requireAuth()

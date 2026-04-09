@@ -2,7 +2,7 @@ import { requireAuth } from "@/lib/server-auth"
 import { NextResponse } from "next/server"
 import { getTodayMeetings } from "@/controllers/meeting.controller"
 
-// GET TODAY MEETINGS
+// Returns meetings scheduled for today for the authenticated user.
 export async function GET() {
   try {
     const user = await requireAuth()

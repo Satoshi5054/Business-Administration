@@ -1,8 +1,6 @@
 import { z } from "zod";
 
-//////////////////////////////////////////////////////
-// COMMON FIELDS
-//////////////////////////////////////////////////////
+// Common user fields shared by registration schemas.
 
 const baseUserFields = {
   name: z.string().min(2, "Name is required"),
@@ -15,9 +13,7 @@ const baseUserFields = {
   departmentName: z.string().min(2, "Department is required"),
 };
 
-//////////////////////////////////////////////////////
-// LOGIN
-//////////////////////////////////////////////////////
+// Login payload.
 
 export const loginSchema = z.object({
   companySlug: z
@@ -28,26 +24,20 @@ export const loginSchema = z.object({
   password: z.string().min(6),
 });
 
-//////////////////////////////////////////////////////
-// REGISTER MANAGER
-//////////////////////////////////////////////////////
+// Manager registration payload.
 
 export const registerManagerSchema = z.object({
   ...baseUserFields,
 });
 
-//////////////////////////////////////////////////////
-// REGISTER EMPLOYEE
-//////////////////////////////////////////////////////
+// Employee registration payload.
 
 export const registerEmployeeSchema = z.object({
   ...baseUserFields,
   position: z.string().min(2, "Position is required"),
 });
 
-//////////////////////////////////////////////////////
-// REGISTER CUSTOMER (Keep if needed)
-//////////////////////////////////////////////////////
+// Customer registration payload (kept for optional flows).
 
 export const registerCustomerSchema = z.object({
   name: z.string().min(2),
@@ -55,9 +45,7 @@ export const registerCustomerSchema = z.object({
   phone: z.string().optional(),
   address: z.string().optional(),
 });
-//////////////////////////////////////////////////////
-// LEAVE REQUEST
-//////////////////////////////////////////////////////
+// Leave request payload.
 
 export const leaveRequestSchema = z.object({
   type: z.string().min(1, "Leave type is required"),

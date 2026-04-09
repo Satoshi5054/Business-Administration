@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from "next/server"
 import { updateMeeting, deleteMeeting } from "@/controllers/meeting.controller"
 
 
-// UPDATE MEETING
+// Updates a meeting by id.
 export async function PATCH(
   req: NextRequest,
   { params }: { params: { id: string } }
@@ -33,7 +33,7 @@ export async function PATCH(
 }
 
 
-// DELETE MEETING
+// Deletes a meeting by id.
 export async function DELETE(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> }

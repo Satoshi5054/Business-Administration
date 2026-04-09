@@ -33,13 +33,6 @@ export default function Sidebar() {
           />
 
           <SidebarItem
-            href="/v1/manager/attendance"
-            label="Attendance"
-            icon="/dashboard/icons/Attendance.svg"
-            active={pathname.startsWith("/v1/manager/attendance")}
-          />
-
-          <SidebarItem
             href="/v1/manager/projects"
             label="Projects"
             icon="/dashboard/icons/Project.svg"

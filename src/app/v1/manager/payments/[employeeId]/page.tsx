@@ -17,24 +17,18 @@ export default function PayPage() {
     setSuccess(false);
 
     try {
-      //////////////////////////////////////////////////////
-      // 1) CREATE PAYMENT
-      //////////////////////////////////////////////////////
+      // Step 1: create the payment record.
       const { data: payment } = await api.post("/protected/payments/pay", {
         employeeId,
       });
 
-      //////////////////////////////////////////////////////
-      // 2) CREATE ORDER
-      //////////////////////////////////////////////////////
+      // Step 2: generate an order for that payment.
       const { data: order } = await api.post(
         "/protected/payments/create-order",
         { paymentId: payment.id },
       );
 
-      //////////////////////////////////////////////////////
-      // 3️⃣ VERIFY PAYMENT
-      //////////////////////////////////////////////////////
+      // Step 3: verify the generated order/payment signature.
       await api.post("/protected/payments/verify", {
         orderId: order.orderId,
         paymentId: payment.id,
@@ -43,9 +37,7 @@ export default function PayPage() {
 
       setSuccess(true);
 
-      //////////////////////////////////////////////////////
-      // 4️⃣ REDIRECT BACK
-      //////////////////////////////////////////////////////
+      // Step 4: redirect back to the list after a short success state.
       setTimeout(() => {
         router.push("/v1/manager/payments");
       }, 1200);
@@ -73,7 +65,7 @@ export default function PayPage() {
         <button
           onClick={handlePay}
           disabled={loading || success}
-          className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg transition"
+          className="w-full bg-blue-600 hover:bg-blue-700 cursor-pointer text-white py-2 rounded-lg transition"
         >
           {success ? "Success" : loading ? "Processing..." : "Pay Now"}
         </button>

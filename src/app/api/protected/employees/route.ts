@@ -4,7 +4,7 @@ import { requireAuth } from "@/lib/server-auth"
 
 export async function GET(req: NextRequest) {
   try {
-    // 1️ Authenticate
+    // Authenticate and ensure this endpoint is manager-only.
     const user = await requireAuth()
 
     if (user.role !== "MANAGER") {
@@ -14,7 +14,7 @@ export async function GET(req: NextRequest) {
       )
     }
 
-    // 2️ Get manager department (optional but safe)
+    // Read the manager department to scope employee visibility.
     const manager = await prisma.user.findUnique({
       where: { id: user.userId },
       select: { departmentId: true }
@@ -27,7 +27,7 @@ export async function GET(req: NextRequest) {
       )
     }
 
-    // 3️ Get query params
+    // Parse search and pagination params.
     const { searchParams } = new URL(req.url)
 
     const search = searchParams.get("search") || ""
@@ -35,7 +35,7 @@ export async function GET(req: NextRequest) {
     const limit = parseInt(searchParams.get("limit") || "5")
     const skip = (page - 1) * limit
 
-    // 4️ Build where condition cleanly
+    // Build a tenant-safe, department-scoped filter.
     const whereCondition: any = {
       companyId: user.companyId,
       departmentId: manager.departmentId
@@ -49,7 +49,7 @@ export async function GET(req: NextRequest) {
       ]
     }
 
-    // 5️ Fetch employees
+    // Fetch paginated employees for the manager's department.
     const employees = await prisma.employee.findMany({
       where: whereCondition,
       include: {

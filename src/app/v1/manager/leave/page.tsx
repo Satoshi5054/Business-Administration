@@ -202,13 +202,13 @@ export default function LeavePage() {
                             onClick={() => updateStatus(leave.id, "APPROVE")}
                             className="text-green-600 hover:underline"
                           >
-                            ✓
+                            Approve
                           </button>
                           <button
                             onClick={() => updateStatus(leave.id, "REJECT")}
                             className="text-red-600 hover:underline"
                           >
-                            ✕
+                            Reject
                           </button>
                         </>
                       ) : (
@@ -216,7 +216,7 @@ export default function LeavePage() {
                           onClick={() => updateStatus(leave.id, "RESET")}
                           className="text-gray-600 hover:underline"
                         >
-                          ↺
+                          Reset
                         </button>
                       )}
                     </td>

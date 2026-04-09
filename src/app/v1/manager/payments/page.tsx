@@ -16,9 +16,7 @@ export default function PaymentsPage() {
 
   const router = useRouter()
 
-  //////////////////////////////////////////////////////
-  //  DEBOUNCE SEARCH
-  //////////////////////////////////////////////////////
+  // Debounce search input to avoid firing requests on every keypress.
   useEffect(() => {
     const timer = setTimeout(() => {
       setDebouncedSearch(search)
@@ -28,9 +26,7 @@ export default function PaymentsPage() {
     return () => clearTimeout(timer)
   }, [search])
 
-  //////////////////////////////////////////////////////
-  // FETCH DATA
-  //////////////////////////////////////////////////////
+  // Fetch pending salary rows for the current filters and page.
  const fetchPending = async () => {
   try {
     setLoading(true)
@@ -58,14 +54,12 @@ export default function PaymentsPage() {
     fetchPending()
   }, [debouncedSearch, page])
 
-  //////////////////////////////////////////////////////
-  // UI
-  //////////////////////////////////////////////////////
+  // Render table, search, and pagination controls.
 
   return (
     <div className="p-6 space-y-6">
 
-      {/* HEADER */}
+      {/* Page header */}
       <div>
         <h1 className="text-2xl font-semibold">Payments</h1>
         <p className="text-sm text-gray-500">
@@ -73,10 +67,10 @@ export default function PaymentsPage() {
         </p>
       </div>
 
-      {/* CARD */}
+      {/* Main content card */}
       <div className="bg-white rounded-xl shadow-sm border">
 
-        {/* SEARCH */}
+        {/* Search box */}
         <div className="p-4 border-b">
           <input
             value={search}
@@ -86,7 +80,7 @@ export default function PaymentsPage() {
           />
         </div>
 
-        {/* TABLE */}
+        {/* Pending salaries table */}
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
 
@@ -146,7 +140,7 @@ export default function PaymentsPage() {
                         onClick={() =>
                           router.push(`/v1/manager/payments/${emp.id}`)
                         }
-                        className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-1.5 rounded-lg text-xs font-medium transition"
+                        className="bg-blue-600 hover:bg-blue-800  cursor-pointer text-white px-4 py-1.5 rounded-lg text-xs font-medium transition"
                       >
                         Pay
                       </button>
@@ -157,7 +151,7 @@ export default function PaymentsPage() {
           </table>
         </div>
 
-        {/* FOOTER (WORKING NOW) */}
+        {/* Pagination footer */}
         <div className="p-4 text-sm text-gray-500 flex justify-between items-center">
           
           <span>

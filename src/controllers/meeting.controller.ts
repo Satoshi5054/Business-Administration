@@ -1,7 +1,7 @@
 import { prisma } from "@/lib/prisma"
 import { JwtPayload } from "@/lib/jwt"
 
-//GET MONTH MEETINGS
+// Returns meetings for a given month where the current user is a participant.
 
 export const getMonthMeetings = async (user: JwtPayload, month: number, year: number)=> {
     const start = new Date(year, month, 1)
@@ -30,7 +30,7 @@ export const getMonthMeetings = async (user: JwtPayload, month: number, year: nu
     })
 }
 
-//GET TODAY MEETINGS  
+// Returns only today's meetings for the current user.
 
 export const getTodayMeetings = async (user: JwtPayload)=>{
     const start = new Date()
@@ -62,7 +62,7 @@ export const getTodayMeetings = async (user: JwtPayload)=>{
     })
 }
 
-//Create Meetings
+// Creates a meeting and automatically includes the creator in participants.
 
 export const createMeeting = async (user: JwtPayload,body: any) => {
     if (user.role === "VIEWER") {
@@ -99,7 +99,7 @@ export const createMeeting = async (user: JwtPayload,body: any) => {
     })
 }
 
-// UPDATE MEETING
+// Allows updates only from the meeting creator or an admin.
 
 export const updateMeeting = async (user: JwtPayload,meetingId: string,body: any) => {
   const meeting = await prisma.meeting.findUnique({
@@ -110,7 +110,7 @@ export const updateMeeting = async (user: JwtPayload,meetingId: string,body: any
     throw new Error("Meeting not found")
   }
 
-  // Only creator or ADMIN can update
+  // Keep edit permissions strict to avoid cross-team accidental updates.
   if (
     meeting.createdById !== user.userId &&
     user.role !== "ADMIN"
@@ -124,7 +124,7 @@ export const updateMeeting = async (user: JwtPayload,meetingId: string,body: any
   })
 }
 
-// DELETE MEETING
+// Allows deletion only from the meeting creator or an admin.
 
 export const deleteMeeting = async (user: JwtPayload,meetingId: string) => {
   const meeting = await prisma.meeting.findUnique({
@@ -135,7 +135,7 @@ export const deleteMeeting = async (user: JwtPayload,meetingId: string) => {
     throw new Error("Meeting not found")
   }
 
-  // Only creator or ADMIN can delete
+  // Same permission rule as update: creator or admin only.
   if (
     meeting.createdById !== user.userId &&
     user.role !== "ADMIN"

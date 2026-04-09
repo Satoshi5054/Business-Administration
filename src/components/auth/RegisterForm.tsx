@@ -65,7 +65,8 @@ export default function RegisterForm({ role }: Props) {
         validatedData
       )
 
-      router.push("/login")
+      
+      router.push("/v1/manager/employees")
 
     }catch(err: any){
       if (err.response?.data?.error) {

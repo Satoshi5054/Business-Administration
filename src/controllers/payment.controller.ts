@@ -3,16 +3,12 @@ import { NextRequest, NextResponse } from "next/server"
 import { requireAuth } from "@/lib/server-auth"
 import crypto from "crypto"
 
-//////////////////////////////////////////////////////
-// GET UNPAID SALARIES (THIS MONTH)
-//////////////////////////////////////////////////////
+// Fetches employees who have not been paid salary for the current month.
 
 export const getPendingSalaries = async (req: NextRequest) => {
   const user = await requireAuth()
 
-  //////////////////////////////////////////////////////
-  // QUERY PARAMS
-  //////////////////////////////////////////////////////
+  // Parse list filters and pagination options from the request URL.
   const { searchParams } = new URL(req.url)
 
   const search = searchParams.get("search") || ""
@@ -22,9 +18,7 @@ export const getPendingSalaries = async (req: NextRequest) => {
 
   const currentMonth = new Date().toISOString().slice(0, 7)
 
-  //////////////////////////////////////////////////////
-  // BASE FILTER
-  //////////////////////////////////////////////////////
+  // Build tenant-safe base filter.
   const where: any = {
     companyId: user.companyId
   }
@@ -33,9 +27,7 @@ export const getPendingSalaries = async (req: NextRequest) => {
     where.departmentId = user.departmentId
   }
 
-  //////////////////////////////////////////////////////
-  // SEARCH FILTER
-  //////////////////////////////////////////////////////
+  // Optional search by employee name or code.
   if (search) {
     where.OR = [
       { name: { contains: search, mode: "insensitive" } },
@@ -43,9 +35,7 @@ export const getPendingSalaries = async (req: NextRequest) => {
     ]
   }
 
-  //////////////////////////////////////////////////////
-  // GET EMPLOYEES
-  //////////////////////////////////////////////////////
+  // Fetch candidate employees first, then remove already-paid ones.
   const employees = await prisma.employee.findMany({
     where,
     select: {
@@ -56,9 +46,7 @@ export const getPendingSalaries = async (req: NextRequest) => {
     orderBy: { name: "asc" }
   })
 
-  //////////////////////////////////////////////////////
-  // FILTER UNPAID (IMPORTANT LOGIC)
-  //////////////////////////////////////////////////////
+  // Keep only employees with no salary payment record for this month.
   const unpaid: any[] = []
 
   for (const emp of employees) {
@@ -74,15 +62,11 @@ export const getPendingSalaries = async (req: NextRequest) => {
     }
   }
 
-  //////////////////////////////////////////////////////
-  // PAGINATION (AFTER FILTER)
-  //////////////////////////////////////////////////////
+  // Pagination happens after filtering because unpaid is computed in memory.
   const total = unpaid.length
   const paginated = unpaid.slice(skip, skip + limit)
 
-  //////////////////////////////////////////////////////
-  // RESPONSE (CONSISTENT FORMAT)
-  //////////////////////////////////////////////////////
+  // Return a stable response shape used by the dashboard table.
   return NextResponse.json({
     data: paginated,
     pagination: {
@@ -94,9 +78,7 @@ export const getPendingSalaries = async (req: NextRequest) => {
   })
 }
 
-//////////////////////////////////////////////////////
-// CREATE PAYMENT (SALARY)
-//////////////////////////////////////////////////////
+// Creates a salary payment entry for one employee for the current month.
 
 export const createSalaryPayment = async (req: NextRequest) => {
   const user = await requireAuth()
@@ -115,6 +97,7 @@ export const createSalaryPayment = async (req: NextRequest) => {
 
   const month = new Date().toISOString().slice(0, 7)
 
+  // Keep payment and salaryPayment writes in one transaction.
   const payment = await prisma.$transaction(async (tx) => {
     const p = await tx.payment.create({
       data: {
@@ -143,9 +126,7 @@ export const createSalaryPayment = async (req: NextRequest) => {
   return NextResponse.json(payment)
 }
 
-//////////////////////////////////////////////////////
-// CREATE ORDER
-//////////////////////////////////////////////////////
+// Generates a payment order and stores the generated order id.
 
 export const createOrder = async (req: NextRequest) => {
   await requireAuth()
@@ -153,6 +134,7 @@ export const createOrder = async (req: NextRequest) => {
   const { paymentId } = await req.json()
 
   const orderId = "order_" + crypto.randomUUID()
+  // Signature allows the client to validate this order payload.
   const signature = crypto
     .createHmac("sha256", process.env.PAYMENT_SECRET!)
     .update(orderId + "|" + paymentId)
@@ -166,9 +148,7 @@ export const createOrder = async (req: NextRequest) => {
   return NextResponse.json({ orderId, signature })
 }
 
-//////////////////////////////////////////////////////
-// VERIFY PAYMENT
-//////////////////////////////////////////////////////
+// Verifies provider signature, then marks payment as successful.
 
 export const verifyPayment = async (req: NextRequest) => {
   await requireAuth()
