@@ -17,6 +17,12 @@ export default function LoginPage() {
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
 
+  const getDashboardPath = (role?: string | null) => {
+    return role === "MANAGER"
+      ? "/v1/manager/dashboard"
+      : "/v1/employees/dashboard"
+  }
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value })
   }
@@ -29,9 +35,18 @@ export default function LoginPage() {
     try {
       const validatedData = loginSchema.parse(form)
 
-      await api.post("/auth/login", validatedData)
-      
-      router.push("/v1/manager/dashboard")
+      const loginResponse = await api.post("/auth/login", validatedData)
+
+      let role = loginResponse.data?.user?.role as string | undefined
+
+      try {
+        const meResponse = await api.get("/auth/me")
+        role = meResponse.data?.role ?? role
+      } catch {
+        // Fall back to the role returned by the login response if the lookup fails.
+      }
+
+      router.push(getDashboardPath(role))
 
     } catch (err: any) {
       if (err.response?.data?.error) {
