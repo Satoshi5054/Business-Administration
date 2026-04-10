@@ -36,6 +36,7 @@ model Company {
   customers     Customer[]
   payments      Payment[]
   meetings      Meeting[]
+  projects      Project[]
 
   @@map("companies")
 }
@@ -54,6 +55,7 @@ model Department {
 
   users     User[]
   employees Employee[]
+  projects  Project[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -88,6 +90,8 @@ model User {
   createdMeetings     Meeting[]
   meetingParticipants MeetingParticipant[]
   payments            Payment[]            @relation("UserPayments")
+  createdProjects     Project[]
+  assignedProjects    ProjectAssignment[]  @relation("ProjectAssignedBy")
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -126,6 +130,7 @@ model Employee {
 
   leaveRequests  LeaveRequest[]
   salaryPayments SalaryPayment[]
+  projectAssignments ProjectAssignment[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -337,6 +342,62 @@ model MeetingParticipant {
 }
 
 //////////////////////////////////////////////////////
+// PROJECTS
+//////////////////////////////////////////////////////
+
+model Project {
+  id String @id @default(cuid())
+
+  title       String
+  description String?
+  clientName  String?
+
+  status   ProjectStatus   @default(PLANNING)
+  priority ProjectPriority @default(MEDIUM)
+
+  startDate DateTime?
+  dueDate   DateTime?
+
+  companyId String
+  company   Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  departmentId String
+  department   Department @relation(fields: [departmentId], references: [id], onDelete: Cascade)
+
+  createdById String
+  createdBy   User @relation(fields: [createdById], references: [id])
+
+  assignments ProjectAssignment[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([companyId])
+  @@index([departmentId])
+  @@index([status])
+  @@map("projects")
+}
+
+model ProjectAssignment {
+  id String @id @default(cuid())
+
+  projectId String
+  project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  employeeId String
+  employee   Employee @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+
+  assignedById String
+  assignedBy   User @relation("ProjectAssignedBy", fields: [assignedById], references: [id])
+
+  assignedAt DateTime @default(now())
+
+  @@unique([projectId, employeeId])
+  @@index([employeeId])
+  @@map("project_assignments")
+}
+
+//////////////////////////////////////////////////////
 // ENUMS
 //////////////////////////////////////////////////////
 
@@ -394,6 +455,21 @@ enum PaymentType {
   SALARY
   EXPENSE
   SUBSCRIPTION
+}
+
+enum ProjectStatus {
+  PLANNING
+  IN_PROGRESS
+  REVIEW
+  BLOCKED
+  COMPLETED
+}
+
+enum ProjectPriority {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
 }
 
 enum ExpenseCategory {
