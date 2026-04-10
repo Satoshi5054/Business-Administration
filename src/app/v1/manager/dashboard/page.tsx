@@ -1,43 +1,41 @@
-"use client"
+"use client";
 
-import { useEffect, useState } from "react"
-import { api } from "@/lib/axios"
+import { useEffect, useState } from "react";
+import { api } from "@/lib/axios";
 
-import StatCard from "@/components/dashboard/StatCard"
-import RecentActivity from "@/components/dashboard/RecentActivity"
-import MeetingCard from "@/components/dashboard/MeetingCard"
+import StatCard from "@/components/dashboard/StatCard";
+import MeetingCard from "@/components/dashboard/MeetingCard";
+import ProjectsCard from "@/components/dashboard/ProjectsCard";
 
 export default function ManagerDashboard() {
-  const [employeeCount, setEmployeeCount] = useState(0)
-  const [pendingLeaves, setPendingLeaves] = useState(0)
-  const [onLeaveToday, setOnLeaveToday] = useState(0)
-  const [loading, setLoading] = useState(true)
+  const [employeeCount, setEmployeeCount] = useState(0);
+  const [pendingLeaves, setPendingLeaves] = useState(0);
+  const [onLeaveToday, setOnLeaveToday] = useState(0);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetchDashboard()
-  }, [])
+    fetchDashboard();
+  }, []);
 
   const fetchDashboard = async () => {
     try {
-      const employeeRes = await api.get("/protected/employees?limit=1")
-      const leaveRes = await api.get("/protected/leave")
+      const employeeRes = await api.get("/protected/employees?limit=1");
+      const leaveRes = await api.get("/protected/leave");
 
-      setEmployeeCount(employeeRes.data.pagination.total)
-      setPendingLeaves(leaveRes.data.stats.pending)
-      setOnLeaveToday(leaveRes.data.stats.onLeaveToday)
-
+      setEmployeeCount(employeeRes.data.pagination.total);
+      setPendingLeaves(leaveRes.data.stats.pending);
+      setOnLeaveToday(leaveRes.data.stats.onLeaveToday);
     } catch (error) {
-      console.error("Dashboard fetch error:", error)
-    }finally {
-      setLoading(false)
+      console.error("Dashboard fetch error:", error);
+    } finally {
+      setLoading(false);
     }
-  }
+  };
 
-  const presentToday = employeeCount - onLeaveToday
+  const presentToday = employeeCount - onLeaveToday;
 
   return (
     <div className="py-3 px-6 space-y-6">
-
       {/* Page Title */}
       <div className="pb-3">
         <h1 className="text-2xl font-semibold">Dashboard</h1>
@@ -47,47 +45,44 @@ export default function ManagerDashboard() {
       </div>
 
       {/* Stat Cards */}
-      <div className="grid grid-cols-3 gap-6">
+      <div className="grid grid-cols-3 gap-4">
         {loading ? (
           <>
-            <div className="h-24 bg-gray-200 animate-pulse rounded-xl" />
-            <div className="h-24 bg-gray-200 animate-pulse rounded-xl" />
-            <div className="h-24 bg-gray-200 animate-pulse rounded-xl" />
+            <div className="h-20 bg-gray-200 animate-pulse rounded-lg" />
+            <div className="h-20 bg-gray-200 animate-pulse rounded-lg" />
+            <div className="h-20 bg-gray-200 animate-pulse rounded-lg" />
           </>
         ) : (
           <>
             <StatCard
               title="TOTAL PRESENT TODAY"
               value={`${presentToday}/${employeeCount}`}
-              icon = "/dashboard/icons/IdCard.svg"
+              icon="/dashboard/icons/IdCard.svg"
             />
 
             <StatCard
               title="ONGOING PROJECTS"
               value={employeeCount}
-              icon = "/dashboard/icons/ProjectMain.svg"
+              icon="/dashboard/icons/ProjectMain.svg"
             />
 
             <StatCard
               title="PENDING LEAVE REQUESTS"
               value={pendingLeaves}
-              icon = "/dashboard/icons/Pending.svg"
+              icon="/dashboard/icons/Pending.svg"
             />
           </>
         )}
-
       </div>
 
       {/* Bottom Section */}
       <div className="grid grid-cols-3 gap-6 mt-6">
-
         <div className="col-span-2">
           <MeetingCard />
         </div>
 
-        <RecentActivity />
-
+        <ProjectsCard />
       </div>
     </div>
-  )
+  );
 }
