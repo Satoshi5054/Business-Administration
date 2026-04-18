@@ -6,21 +6,22 @@ import { updateMeeting, deleteMeeting } from "@/controllers/meeting.controller"
 // Updates a meeting by id.
 export async function PATCH(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const user = await requireAuth()
+    const { id } = await params
 
     const body = await req.json()
 
-    if (!params.id) {
+    if (!id) {
       return NextResponse.json(
         { message: "Meeting id is required" },
         { status: 400 }
       )
     }
 
-    const updatedMeeting = await updateMeeting(user, params.id, body)
+    const updatedMeeting = await updateMeeting(user, id, body)
 
     return NextResponse.json(updatedMeeting)
 
