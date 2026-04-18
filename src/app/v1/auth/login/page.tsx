@@ -67,7 +67,7 @@ export default function LoginPage() {
 
       <div className="text-center mb-8">
         <h1 className="text-3xl font-bold text-gray-800">
-          NexusERP
+          Syncro
         </h1>
         <p className="text-gray-500 mt-2">
           Log in to your enterprise dashboard

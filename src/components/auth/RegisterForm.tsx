@@ -225,7 +225,7 @@ export default function RegisterForm({ role }: Props) {
           </h2>
 
           <p className="text-gray-600 mb-10">
-            Join thousands of companies using NexusERP to streamline finance,
+            Join thousands of companies using Syncro to streamline finance,
             HR, and management workflows in one secure platform.
           </p>
 
