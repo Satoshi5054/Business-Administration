@@ -8,7 +8,7 @@ export default function Sidebar() {
 
   return (
     <aside className="w-64 bg-white border-r flex flex-col">
-        <div className="px-6 py-8 font-semibold text-lg ">Business ERP</div>
+        <div className="px-6 py-8 font-semibold text-lg ">Syncro</div>
 
         <nav className="space-y-1 px-3">
           <SidebarItem
