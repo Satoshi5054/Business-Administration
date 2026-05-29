@@ -1,44 +1,36 @@
-# Company App
+This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
-Multi-tenant business management app built with Next.js (App Router), Prisma, and PostgreSQL.
+## Getting Started
 
-## Local Development
+First, run the development server:
 
-1. Install dependencies:
-	npm install
-2. Configure environment variables:
-	cp .env.example .env
-3. Run database migrations (if needed):
-	npx prisma migrate deploy
-4. Start the app:
-	npm run dev
+```bash
+npm run dev
+# or
+yarn dev
+# or
+pnpm dev
+# or
+bun dev
+```
 
-## Required Environment Variables
+Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-Set these in your local `.env` and in Vercel Project Settings -> Environment Variables:
+You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
-- DATABASE_URL
-- JWT_SECRET
-- PAYMENT_SECRET
+This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
-Use `.env.example` as the template.
+## Learn More
 
-## Deploy to Vercel
+To learn more about Next.js, take a look at the following resources:
 
-1. Push this repository to GitHub.
-2. In Vercel, click New Project and import the repository.
-3. In Project Settings -> Environment Variables, add:
-	- DATABASE_URL
-	- JWT_SECRET
-	- PAYMENT_SECRET
-4. In Project Settings -> Build & Development Settings, set Build Command to:
-	npm run vercel-build
-5. Keep the default Output Directory (do not set a custom one).
-6. Deploy.
+- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
+- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
 
-The `vercel-build` script runs Prisma client generation, applies migrations, and then builds Next.js.
+You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
 
-## Notes
+## Deploy on Vercel
 
-- This project uses PostgreSQL through Prisma, so your database must be publicly reachable from Vercel.
-- If you use a managed Postgres provider, ensure SSL is enabled in DATABASE_URL.
+The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+
+Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
