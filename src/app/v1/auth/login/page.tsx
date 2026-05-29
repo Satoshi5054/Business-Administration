@@ -74,6 +74,24 @@ export default function LoginPage() {
         </p>
       </div>
 
+      <div className="mb-8 rounded-xl border border-blue-100 bg-blue-50/80 p-4 text-sm text-slate-700">
+        <p className="font-semibold text-slate-900">Demo credentials</p>
+        <div className="mt-3 space-y-2">
+          <div className="flex items-center justify-between gap-4">
+            <span className="text-slate-500">Company code</span>
+            <span className="font-medium">dummy-company</span>
+          </div>
+          <div className="flex items-center justify-between gap-4">
+            <span className="text-slate-500">Email</span>
+            <span className="font-medium">arjun.mehta@dummy.com</span>
+          </div>
+          <div className="flex items-center justify-between gap-4">
+            <span className="text-slate-500">Password</span>
+            <span className="font-medium">password123</span>
+          </div>
+        </div>
+      </div>
+
       <form onSubmit={handleSubmit} className="space-y-6">
 
         <div>
